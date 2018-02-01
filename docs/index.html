@@ -52,7 +52,7 @@
       <button class="btn btn-light m-1" @click="addTag">H1</button>
       <button class="btn btn-light m-1" @click="addTag">H2</button>
       <button class="btn btn-light m-1" @click="addTag">H3</button>
-      <button class="btn btn-light m-1 d-none" @click="addTag">P</button>
+      <button class="btn btn-light m-1" @click="addTag">P</button>
       <button class="btn btn-light m-1 d-none" @click="addTag">B</button>
       <button class="btn btn-light m-1 d-none" @click="addTag">I</button>
       <button class="btn btn-light m-1 d-none" @click="addTag">></button> <br>
@@ -63,8 +63,7 @@
       var app = new Vue({
          el: '#editor',
          data: {
-            input: `![Desc](https://raw.githubusercontent.com/idushii/md/master/image.png)
-
+            input: `
 # Планы
 
 В планах есть несколько направлений реализации
@@ -111,7 +110,7 @@
                let numSymbol = window.source.selectionStart
                let length = 0;
                let numLine = 0;
-               while (length < numSymbol) {
+               while (length <= numSymbol) {
                   length += this.Lines[numLine].length + 1;
                   numLine++
                }
@@ -137,6 +136,7 @@
                      this.addHeadTag(3);
                      break;
                   case 'P':
+                     this.addEnterLine();
                      break;
                   case 'B':
                      break;
@@ -146,6 +146,7 @@
                      break;
                }
             },
+            /* Заголовки */
             addHeadTag(numTag = 1) {
                let indexLine = this.indexSelectLine
                let { Line, countClearSymbol } = this.clearHeadTag(indexLine)
@@ -178,7 +179,21 @@
                   Line: Line.substring(countHeadTag),
                   countClearSymbol: countHeadTag
                }
-            }
+            },
+            /* Абзац */
+            addEnterLine() {
+               console.log('addEnterLine')
+               let indexLine = this.indexSelectLine;
+               if (indexLine > 0)
+                  if (this.Lines[indexLine - 1] != "")
+                     this.Lines[indexLine - 1] += "\n"
+
+               if (indexLine < this.Lines.length)
+                  if (this.Lines[indexLine + 1] != "")
+                     this.Lines[indexLine + 1] = "\n" + this.Lines[indexLine + 1]
+
+               this.input = this.Lines.join("\n")
+            },
          }
       })
 
